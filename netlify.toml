@@ -1,0 +1,7 @@
+# Конфиг для Netlify. Vercel определяет Vite автоматически — ему отдельный файл не нужен.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"

@@ -1,0 +1,267 @@
+/* ═══════════════════════════════════════════════════════════════════════
+   ДЕЛО №001 — нуар-фундамент.
+   Палитра: чёрно-белая база + ОДИН акцент — янтарный (свет лампы).
+   Полная стилевая полировка — на этапе 6.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* База */
+  --bg: #0c0b0a;
+  --bg-2: #141210;
+  --panel: #1b1815;
+  --panel-2: #221e1a;
+  --edge: #2c2823;
+  --ink: #e8e2d6;
+  --ink-dim: #b3ab9c;
+  --muted: #7c7468;
+
+  /* Единственный акцент — янтарный. Хочешь красный — поменяй эти три строки. */
+  --accent: #e0a13a;
+  --accent-soft: #c98f34;
+  --accent-glow: rgba(224, 161, 58, 0.35);
+  --thread: var(--accent);
+
+  /* Семантика улик */
+  --direct: var(--accent);
+  --false: #8a8378;
+
+  /* Шрифты */
+  --font-type: 'Special Elite', 'Courier Prime', monospace; /* документы */
+  --font-mono: 'Courier Prime', monospace;
+  --font-ui: 'Inter', system-ui, sans-serif;               /* интерфейс */
+
+  --radius: 4px;
+  --shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+
+  /* Курсор-лупа для интерактивных элементов */
+  --cursor-lens:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Ccircle cx='11' cy='11' r='7' fill='none' stroke='%23e0a13a' stroke-width='2'/%3E%3Cline x1='16' y1='16' x2='24' y2='24' stroke='%23e0a13a' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E")
+      11 11,
+    pointer;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Виньетка поверх всего (не перехватывает клики) */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background:
+    radial-gradient(120% 90% at 50% 42%, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
+  mix-blend-mode: multiply;
+}
+
+/* Зернистость плёнки — мерцающий шум поверх всего */
+body::before {
+  content: '';
+  position: fixed;
+  inset: -60%;
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 0.5s steps(1) infinite;
+  will-change: transform;
+}
+@keyframes grain {
+  0% { transform: translate(0, 0); }
+  10% { transform: translate(-3%, -4%); }
+  20% { transform: translate(-6%, 2%); }
+  30% { transform: translate(4%, -5%); }
+  40% { transform: translate(-2%, 6%); }
+  50% { transform: translate(-6%, 3%); }
+  60% { transform: translate(5%, 4%); }
+  70% { transform: translate(-4%, -6%); }
+  80% { transform: translate(6%, 2%); }
+  90% { transform: translate(-3%, 5%); }
+  100% { transform: translate(0, 0); }
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-type);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  margin: 0 0 0.5em;
+}
+
+button {
+  font-family: var(--font-ui);
+  cursor: pointer;
+}
+
+/* Лупа на всех интерактивных элементах (кроме перетаскиваемых — там «рука») */
+button:not(:disabled),
+a[href],
+[role='button'],
+.itab,
+.pick-sus,
+.pick-chip,
+.pick-ev {
+  cursor: var(--cursor-lens);
+}
+button:disabled {
+  cursor: not-allowed;
+}
+
+a {
+  color: var(--accent);
+}
+
+/* ── Утилиты ─────────────────────────────────────────────────────────── */
+.type {
+  font-family: var(--font-type);
+}
+.mono {
+  font-family: var(--font-mono);
+}
+
+/* Основной каркас приложения */
+.app {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  animation: fade-in 0.5s ease both;
+}
+
+.screen__inner {
+  width: min(1000px, 92vw);
+  margin: 0 auto;
+  padding: 2.5rem 0 4rem;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Кнопки */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.4rem;
+  border: 1px solid var(--edge);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--ink);
+  font-size: 0.95rem;
+  transition: border-color 0.2s, background 0.2s, transform 0.1s;
+}
+.btn:hover {
+  border-color: var(--accent);
+  background: var(--panel-2);
+}
+.btn:active {
+  transform: translateY(1px);
+}
+.btn--accent {
+  border-color: var(--accent-soft);
+  background: linear-gradient(180deg, var(--accent) 0%, var(--accent-soft) 100%);
+  color: #1a1206;
+  font-weight: 600;
+  box-shadow: 0 0 24px var(--accent-glow);
+}
+.btn--accent:hover {
+  background: var(--accent);
+}
+.btn--ghost {
+  background: transparent;
+}
+
+/* Заголовок экрана */
+.shead {
+  margin-bottom: 1.5rem;
+}
+.shead__step {
+  color: var(--accent);
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.shead__title {
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  margin: 0.3rem 0 0.4rem;
+}
+.shead__sub {
+  color: var(--ink-dim);
+  max-width: 60ch;
+  margin: 0;
+}
+
+/* ── Мерцание лампы: тёплый свет сверху, слегка «дышит» и вздрагивает ──── */
+.lamp {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 46vh;
+  pointer-events: none;
+  z-index: 3;
+  background: radial-gradient(58% 100% at 50% -12%, rgba(224, 161, 58, 0.11), transparent 72%);
+  mix-blend-mode: screen;
+  animation: lamp-flicker 7s ease-in-out infinite;
+}
+@keyframes lamp-flicker {
+  0%, 100% { opacity: 1; }
+  8% { opacity: 0.92; }
+  9% { opacity: 0.7; }
+  11% { opacity: 0.95; }
+  40% { opacity: 1; }
+  42% { opacity: 0.82; }
+  43% { opacity: 1; }
+  70% { opacity: 0.96; }
+  72% { opacity: 0.68; }
+  74% { opacity: 0.93; }
+}
+
+/* Уважение к настройке «уменьшить движение» */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  body::before {
+    display: none;
+  }
+  .lamp {
+    animation: none;
+  }
+}

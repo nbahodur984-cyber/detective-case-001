@@ -1,0 +1,59 @@
+.suspects {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.2rem;
+}
+
+.dossier {
+  display: flex;
+  gap: 1rem;
+  padding: 1.1rem;
+  background: var(--panel);
+  border: 1px solid var(--edge);
+  border-radius: var(--radius);
+  transition: border-color 0.2s, transform 0.15s;
+}
+.dossier:hover {
+  border-color: var(--accent-soft);
+  transform: translateY(-2px);
+}
+
+.dossier__photo {
+  flex-shrink: 0;
+  width: 58px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(160deg, var(--panel-2), #0f0d0b);
+  border: 1px solid var(--edge);
+  border-radius: 3px;
+  color: var(--muted);
+  font-family: var(--font-type);
+  font-size: 1.1rem;
+  letter-spacing: 0.05em;
+}
+
+.dossier__name {
+  margin: 0 0 0.15rem;
+  font-size: 1.15rem;
+  color: var(--ink);
+}
+.dossier__role {
+  margin: 0 0 0.7rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+.dossier__row {
+  margin: 0 0 0.5rem;
+  font-size: 0.86rem;
+  color: var(--ink-dim);
+}
+.dossier__k {
+  display: block;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.15rem;
+}
