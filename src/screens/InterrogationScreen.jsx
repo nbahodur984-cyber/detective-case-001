@@ -1,11 +1,10 @@
 import { useState } from 'react'
 import ScreenHeader from '../components/ScreenHeader.jsx'
 import ScreenNav from '../components/ScreenNav.jsx'
+import SuspectPortrait from '../components/SuspectPortrait.jsx'
 import { useGame } from '../state/GameContext.jsx'
 import { DIALOGUE, EVIDENCE, SUSPECTS } from '../state/caseData.js'
 import './InterrogationScreen.css'
-
-const initials = (name) => name.split(' ').map((w) => w[0]).join('')
 const evNo = (id) => {
   const i = EVIDENCE.findIndex((e) => e.id === id)
   return i < 0 ? '' : String(i + 1).padStart(2, '0')
@@ -69,7 +68,9 @@ export default function InterrogationScreen() {
                 className={'itab' + (s.id === activeId ? ' is-active' : '')}
                 onClick={() => setActiveId(s.id)}
               >
-                <span className="itab__photo">{initials(s.name)}</span>
+                <span className="itab__photo">
+                  <SuspectPortrait id={s.id} />
+                </span>
                 <span className="itab__name">{s.name}</span>
                 <span className="itab__count mono">
                   {count}/{total}
@@ -82,7 +83,9 @@ export default function InterrogationScreen() {
         {/* Комната допроса */}
         <div className="iroom">
           <div className="iroom__head">
-            <div className="iroom__photo">{initials(suspect.name)}</div>
+            <div className="iroom__photo">
+              <SuspectPortrait id={suspect.id} />
+            </div>
             <div>
               <h2 className="iroom__name">{suspect.name}</h2>
               <p className="iroom__role">{suspect.role}</p>

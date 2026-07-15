@@ -1,5 +1,6 @@
 import ScreenHeader from '../components/ScreenHeader.jsx'
 import ScreenNav from '../components/ScreenNav.jsx'
+import SuspectPortrait from '../components/SuspectPortrait.jsx'
 import { SUSPECTS } from '../state/caseData.js'
 import './SuspectsScreen.css'
 
@@ -15,8 +16,8 @@ export default function SuspectsScreen() {
         <div className="suspects">
           {SUSPECTS.map((s) => (
             <article className="dossier" key={s.id}>
-              <div className="dossier__photo" aria-hidden="true">
-                <span>{s.name.split(' ').map((w) => w[0]).join('')}</span>
+              <div className="dossier__photo">
+                <SuspectPortrait id={s.id} />
               </div>
               <div className="dossier__body">
                 <h3 className="dossier__name">{s.name}</h3>

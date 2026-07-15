@@ -134,17 +134,13 @@
   box-shadow: 0 0 30px var(--accent-glow);
 }
 .guilty__photo {
-  width: 70px;
-  height: 86px;
+  width: 72px;
+  height: 88px;
   flex-shrink: 0;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(160deg, #2a2620, #0c0a08);
+  overflow: hidden;
+  background: #14110d;
   border: 1px solid var(--accent-soft);
   border-radius: 3px;
-  font-family: var(--font-type);
-  font-size: 1.3rem;
-  color: var(--ink);
 }
 .guilty__tag {
   font-size: 0.72rem;

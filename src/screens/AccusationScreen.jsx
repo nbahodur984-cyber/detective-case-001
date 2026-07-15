@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import ScreenHeader from '../components/ScreenHeader.jsx'
 import ScreenNav from '../components/ScreenNav.jsx'
+import SuspectPortrait from '../components/SuspectPortrait.jsx'
 import { useGame } from '../state/GameContext.jsx'
 import { EVIDENCE, MOTIVES, SOLUTION, SUSPECTS } from '../state/caseData.js'
 import './AccusationScreen.css'
 
-const initials = (name) => name.split(' ').map((w) => w[0]).join('')
 const pad2 = (n) => String(n).padStart(2, '0')
 
 export default function AccusationScreen() {
@@ -50,7 +50,9 @@ export default function AccusationScreen() {
                   className={'pick-sus' + (pick.suspectId === s.id ? ' is-picked' : '')}
                   onClick={() => setPick((p) => ({ ...p, suspectId: s.id }))}
                 >
-                  <span className="pick-sus__photo">{initials(s.name)}</span>
+                  <span className="pick-sus__photo">
+                    <SuspectPortrait id={s.id} />
+                  </span>
                   <span className="pick-sus__name">{s.name}</span>
                   <span className="pick-sus__role">{s.role}</span>
                 </button>

@@ -1,4 +1,5 @@
 import ScreenHeader from '../components/ScreenHeader.jsx'
+import SuspectPortrait from '../components/SuspectPortrait.jsx'
 import { useGame } from '../state/GameContext.jsx'
 import { EVIDENCE, MOTIVES, SOLUTION, SUSPECTS } from '../state/caseData.js'
 import './SolutionScreen.css'
@@ -6,7 +7,6 @@ import './SolutionScreen.css'
 const susById = Object.fromEntries(SUSPECTS.map((s) => [s.id, s]))
 const evById = Object.fromEntries(EVIDENCE.map((e) => [e.id, e]))
 const motiveById = Object.fromEntries(MOTIVES.map((m) => [m.id, m]))
-const initials = (name) => name.split(' ').map((w) => w[0]).join('')
 
 function Row({ label, value }) {
   return (
@@ -90,7 +90,9 @@ export default function SolutionScreen() {
 
         {/* Виновный */}
         <div className="guilty">
-          <div className="guilty__photo">{initials(culprit.name)}</div>
+          <div className="guilty__photo">
+            <SuspectPortrait id={culprit.id} />
+          </div>
           <div>
             <span className="guilty__tag mono">Виновен</span>
             <h3 className="guilty__name">{culprit.name}</h3>

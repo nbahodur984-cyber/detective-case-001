@@ -103,6 +103,7 @@ export const SUSPECTS = [
 export const EVIDENCE = [
   {
     id: 'floorclock',
+    kind: 'photo',
     title: 'Напольные часы — 21:15',
     type: 'false',
     short: 'Стрелки замерли на 21:15. Похоже, тогда всё и случилось.',
@@ -114,6 +115,7 @@ export const EVIDENCE = [
   },
   {
     id: 'wristwatch',
+    kind: 'photo',
     title: 'Наручные часы жертвы — 22:52',
     type: 'direct',
     short: 'Разбиты при падении, замерли на 22:52.',
@@ -125,6 +127,7 @@ export const EVIDENCE = [
   },
   {
     id: 'call',
+    kind: 'doc',
     title: 'Журнал звонков — вызов в 22:30',
     type: 'direct',
     short: 'Аркадий звонил Инге в 22:30 — значит, был жив.',
@@ -136,6 +139,7 @@ export const EVIDENCE = [
   },
   {
     id: 'weapon',
+    kind: 'photo',
     title: 'Орудие — гиря-маятник, отпечатки Дана',
     type: 'false',
     short: 'Бронзовая гиря со следами пальцев подмастерья.',
@@ -147,6 +151,7 @@ export const EVIDENCE = [
   },
   {
     id: 'rain',
+    kind: 'note',
     title: 'Мокрые следы; дождь с 22:15',
     type: 'direct',
     short: 'Вода у входа. Дождь начался ровно в 22:15.',
@@ -158,6 +163,7 @@ export const EVIDENCE = [
   },
   {
     id: 'matchbook',
+    kind: 'receipt',
     title: 'Спичечный коробок «Гранат»',
     type: 'direct',
     short: 'Фирменный коробок ресторана — на полу мастерской.',
@@ -169,6 +175,7 @@ export const EVIDENCE = [
   },
   {
     id: 'contract',
+    kind: 'torn',
     title: 'Порванный контракт на «Селесту»',
     type: 'direct',
     short: 'Разорванный договор продажи редких часов.',
@@ -180,6 +187,7 @@ export const EVIDENCE = [
   },
   {
     id: 'staging',
+    kind: 'doc',
     title: 'Экспертиза: часы остановлены вручную',
     type: 'direct',
     short: 'Стекло разбито снаружи, механизм остановлен рукой.',
@@ -191,6 +199,7 @@ export const EVIDENCE = [
   },
   {
     id: 'hospital',
+    kind: 'doc',
     title: 'Дан: справка приёмного покоя',
     type: 'direct',
     short: 'Дан был в больнице 22:15–23:30 с порезом руки.',
@@ -203,6 +212,7 @@ export const EVIDENCE = [
   },
   {
     id: 'atm',
+    kind: 'photo',
     title: 'Лора: камера банкомата 22:47',
     type: 'direct',
     short: 'Лора снимала деньги на другом конце города в 22:47.',
@@ -215,6 +225,7 @@ export const EVIDENCE = [
   },
   {
     id: 'witness',
+    kind: 'note',
     title: 'Показания сторожа',
     type: 'direct',
     short: '~22:50 — крик и грохот. 22:55 — мужчина под зонтом, тёмный седан.',
@@ -227,6 +238,7 @@ export const EVIDENCE = [
   },
   {
     id: 'nolock',
+    kind: 'note',
     title: 'Нет следов взлома',
     type: 'direct',
     short: 'Дверь заперта. Ключи — у Аркадия, Марка и Дана.',

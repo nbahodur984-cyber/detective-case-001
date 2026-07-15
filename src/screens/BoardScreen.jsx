@@ -3,80 +3,91 @@ import ScreenHeader from '../components/ScreenHeader.jsx'
 import ScreenNav from '../components/ScreenNav.jsx'
 import EvidenceIcon from '../components/EvidenceIcon.jsx'
 import EvidenceModal from '../components/EvidenceModal.jsx'
+import SuspectPortrait from '../components/SuspectPortrait.jsx'
 import { useGame } from '../state/GameContext.jsx'
 import { EVIDENCE, SUSPECTS } from '../state/caseData.js'
 import './BoardScreen.css'
 
-// Позиции карточек на доске (в % от размера доски). center-X, top-Y.
+// ── Холст-макет доски ─────────────────────────────────────────────────────
+// Всё внутри задано в этих координатах и целиком масштабируется под экран.
+// Благодаря этому композиция не «плывёт», а геометрия нитей считается
+// аналитически из позиций ниже — без единого замера DOM.
+const BOARD_W = 1040
+const BOARD_H = 640
+
+// x — центр карточки, y — её верх (там же булавка), rot — наклон.
+// Разбросано намеренно неровно: разные высоты, шаг и наклон.
 const EV_POS = {
-  floorclock: { left: 10, top: 5, rot: -3 },
-  wristwatch: { left: 34, top: 3, rot: 2 },
-  call: { left: 58, top: 5, rot: -2 },
-  weapon: { left: 83, top: 3, rot: 3 },
-  rain: { left: 10, top: 31, rot: 2 },
-  matchbook: { left: 34, top: 33, rot: -3 },
-  contract: { left: 58, top: 31, rot: 2 },
-  staging: { left: 83, top: 33, rot: -2 },
-  hospital: { left: 10, top: 57, rot: -2 },
-  atm: { left: 34, top: 59, rot: 3 },
-  witness: { left: 58, top: 57, rot: -3 },
-  nolock: { left: 83, top: 59, rot: 2 },
+  floorclock: { x: 112, y: 26, rot: -4.5 },
+  call: { x: 332, y: 50, rot: 3 },
+  wristwatch: { x: 560, y: 18, rot: -2 },
+  weapon: { x: 796, y: 42, rot: 4 },
+  atm: { x: 944, y: 28, rot: -3 },
+
+  matchbook: { x: 132, y: 214, rot: 4.5 },
+  contract: { x: 360, y: 238, rot: -2.5 },
+  staging: { x: 610, y: 200, rot: 3.5 },
+  hospital: { x: 872, y: 228, rot: -3 },
+
+  rain: { x: 162, y: 396, rot: -3.5 },
+  witness: { x: 452, y: 414, rot: 2.5 },
+  nolock: { x: 782, y: 390, rot: -2 },
 }
+
 const SUS_POS = {
-  lora: { left: 14, top: 84 },
-  dan: { left: 38, top: 84 },
-  inga: { left: 62, top: 84 },
-  mark: { left: 86, top: 84 },
+  lora: { x: 150, y: 512 },
+  dan: { x: 400, y: 512 },
+  inga: { x: 650, y: 512 },
+  mark: { x: 900, y: 512 },
+}
+
+// Чем крепится улика: булавка или скотч
+const TAPED = new Set(['note', 'receipt'])
+const ICON_SIZE = { photo: 30, doc: 22, note: 20, torn: 22, receipt: 20 }
+
+// Точка крепления нити — прямо из макета, без getBoundingClientRect.
+// Булавка сидит на top:-9px при размере 15px → её центр на 1.5px ВЫШЕ верха
+// карточки. Скотч (top:-8px, высота 16) центрируется ровно по верху.
+const KIND_BY_ID = Object.fromEntries(EVIDENCE.map((e) => [e.id, e.kind]))
+const pinOf = (id) => {
+  const e = EV_POS[id]
+  if (e) return { x: e.x, y: e.y + (TAPED.has(KIND_BY_ID[id]) ? 0 : -1.5) }
+  const s = SUS_POS[id]
+  if (s) return { x: s.x, y: s.y - 1.5 }
+  return null
 }
 
 const pad2 = (n) => String(n).padStart(2, '0')
 
 export default function BoardScreen() {
   const { state, openEvidence } = useGame()
-  const [active, setActive] = useState(null) // раскрытая улика (модалка)
+  const [active, setActive] = useState(null)
+  const wrapRef = useRef(null)
+  const [scale, setScale] = useState(1)
 
-  const boardRef = useRef(null)
-  const nodeRefs = useRef({})
-  const [size, setSize] = useState({ w: 0, h: 0 })
-  const [pts, setPts] = useState({}) // id -> {x,y} точка «булавки»
-
-  const setNodeRef = (id) => (el) => {
-    if (el) nodeRefs.current[id] = el
-    else delete nodeRefs.current[id]
-  }
-
-  // Замер центров булавок относительно доски — для геометрии нитей.
-  const measure = useCallback(() => {
-    const board = boardRef.current
-    if (!board) return
-    const b = board.getBoundingClientRect()
-    const next = {}
-    for (const [id, el] of Object.entries(nodeRefs.current)) {
-      const r = el.getBoundingClientRect()
-      next[id] = { x: r.left - b.left + r.width / 2, y: r.top - b.top + 13 }
-    }
-    setSize({ w: b.width, h: b.height })
-    setPts(next)
+  // Вписываем холст в доступное место: доска всегда видна целиком.
+  const fit = useCallback(() => {
+    const wrap = wrapRef.current
+    if (!wrap) return
+    const availW = wrap.clientWidth - 24 // минус рамка сцены (12px с каждой стороны)
+    const availH = window.innerHeight - 240 // запас на шапку, легенду и подвал
+    const s = Math.min(availW / BOARD_W, availH / BOARD_H)
+    setScale(Math.max(0.45, Math.min(1, s)))
   }, [])
 
   useLayoutEffect(() => {
-    measure()
-  }, [measure])
+    fit()
+  }, [fit])
 
   useEffect(() => {
-    const ro = new ResizeObserver(measure)
-    if (boardRef.current) ro.observe(boardRef.current)
-    window.addEventListener('resize', measure)
-    // Пере-замер после подгрузки веб-шрифтов (иначе булавки «съедут»).
-    if (document.fonts?.ready) document.fonts.ready.then(measure)
-    // И ещё раз — когда карточки «прикрепятся» (анимация входа завершится).
-    const t = setTimeout(measure, 900)
+    const ro = new ResizeObserver(fit)
+    if (wrapRef.current) ro.observe(wrapRef.current)
+    window.addEventListener('resize', fit)
     return () => {
       ro.disconnect()
-      window.removeEventListener('resize', measure)
-      clearTimeout(t)
+      window.removeEventListener('resize', fit)
     }
-  }, [measure])
+  }, [fit])
 
   const openCard = (ev) => {
     openEvidence(ev.id)
@@ -94,94 +105,109 @@ export default function BoardScreen() {
           подозреваемому — это ваша карта версий.
         </ScreenHeader>
         <div className="board-legend mono">
-          <span>Раскрыто: {state.openedEvidence.length}/{EVIDENCE.length}</span>
+          <span>
+            Раскрыто: {state.openedEvidence.length}/{EVIDENCE.length}
+          </span>
           <span className="board-legend__sep">·</span>
           <span>Нитей: {state.threads.length}</span>
         </div>
       </div>
 
-      <div className="board-wrap">
-        <div className="board" ref={boardRef}>
-          {/* Слой нитей поверх карточек, но клики пропускает насквозь */}
-          <svg
-            className="threads"
-            width={size.w}
-            height={size.h}
-            viewBox={`0 0 ${size.w || 1} ${size.h || 1}`}
-          >
-            {state.threads.map((t, i) => {
-              const a = pts[t.evidenceId]
-              const b = pts[t.suspectId]
-              if (!a || !b) return null
-              const mx = (a.x + b.x) / 2
-              const my = (a.y + b.y) / 2
-              const dist = Math.hypot(b.x - a.x, b.y - a.y)
-              const sag = Math.min(64, dist * 0.12) + 8
-              const d = `M ${a.x} ${a.y} Q ${mx} ${my + sag} ${b.x} ${b.y}`
+      <div className="board-wrap" ref={wrapRef}>
+        {/* Сцена держит место под отмасштабированный холст */}
+        <div
+          className="board-stage"
+          style={{ width: BOARD_W * scale, height: BOARD_H * scale }}
+        >
+          <div className="board" style={{ '--scale': scale }}>
+            {/* Нити — поверх карточек, клики пропускают насквозь */}
+            <svg
+              className="threads"
+              viewBox={`0 0 ${BOARD_W} ${BOARD_H}`}
+              preserveAspectRatio="none"
+            >
+              {state.threads.map((t, i) => {
+                const a = pinOf(t.evidenceId)
+                const b = pinOf(t.suspectId)
+                if (!a || !b) return null
+                const mx = (a.x + b.x) / 2
+                const my = (a.y + b.y) / 2
+                const dist = Math.hypot(b.x - a.x, b.y - a.y)
+                const sag = Math.min(64, dist * 0.12) + 8
+                const d = `M ${a.x} ${a.y} Q ${mx} ${my + sag} ${b.x} ${b.y}`
+                return (
+                  <g key={`${t.evidenceId}-${t.suspectId}-${i}`} className="thread">
+                    <path className="thread__line" d={d} />
+                    <circle className="thread__knot" cx={a.x} cy={a.y} r="4" />
+                    <circle className="thread__knot" cx={b.x} cy={b.y} r="4" />
+                  </g>
+                )
+              })}
+            </svg>
+
+            {/* Улики */}
+            {EVIDENCE.map((ev, i) => {
+              const pos = EV_POS[ev.id]
+              const opened = state.openedEvidence.includes(ev.id)
+              const links = threadsForCard(ev.id)
               return (
-                <g key={`${t.evidenceId}-${t.suspectId}-${i}`} className="thread">
-                  <path className="thread__line" d={d} />
-                  <circle className="thread__knot" cx={a.x} cy={a.y} r="3.5" />
-                  <circle className="thread__knot" cx={b.x} cy={b.y} r="3.5" />
-                </g>
+                <button
+                  key={ev.id}
+                  className={
+                    `ev-card ev-card--${ev.kind}` + (opened ? ' is-opened' : '')
+                  }
+                  style={{
+                    left: `${pos.x}px`,
+                    top: `${pos.y}px`,
+                    '--rot': `${pos.rot}deg`,
+                    animationDelay: `${i * 0.04}s`,
+                  }}
+                  onClick={() => openCard(ev)}
+                >
+                  {TAPED.has(ev.kind) ? (
+                    <span className="ev-card__tape" />
+                  ) : (
+                    <span className="ev-card__pin" />
+                  )}
+                  <span className="ev-card__no mono">№{pad2(i + 1)}</span>
+                  <span className="ev-card__frame">
+                    <EvidenceIcon id={ev.id} size={ICON_SIZE[ev.kind]} />
+                  </span>
+                  <span className="ev-card__title">{ev.title}</span>
+                  {opened && (
+                    <span className="ev-card__seen" aria-hidden="true">
+                      ✓
+                    </span>
+                  )}
+                  {links > 0 && <span className="ev-card__links">{links}</span>}
+                </button>
               )
             })}
-          </svg>
 
-          {/* Карточки улик */}
-          {EVIDENCE.map((ev, i) => {
-            const pos = EV_POS[ev.id]
-            const opened = state.openedEvidence.includes(ev.id)
-            const links = threadsForCard(ev.id)
-            return (
-              <button
-                key={ev.id}
-                ref={setNodeRef(ev.id)}
-                className={'ev-card' + (opened ? ' is-opened' : '')}
-                style={{
-                  left: `${pos.left}%`,
-                  top: `${pos.top}%`,
-                  '--rot': `${pos.rot}deg`,
-                  animationDelay: `${i * 0.04}s`,
-                }}
-                onClick={() => openCard(ev)}
-              >
-                <span className="ev-card__pin" />
-                <span className="ev-card__no mono">№{pad2(i + 1)}</span>
-                <span className="ev-card__icon">
-                  <EvidenceIcon id={ev.id} />
-                </span>
-                <span className="ev-card__title">{ev.title}</span>
-                {opened && <span className="ev-card__seen" aria-hidden="true">✓</span>}
-                {links > 0 && <span className="ev-card__links">{links}</span>}
-              </button>
-            )
-          })}
-
-          {/* Узлы подозреваемых */}
-          {SUSPECTS.map((s, si) => {
-            const pos = SUS_POS[s.id]
-            const links = threadsForSuspect(s.id)
-            return (
-              <div
-                key={s.id}
-                ref={setNodeRef(s.id)}
-                className={'sus-node' + (links > 0 ? ' is-linked' : '')}
-                style={{
-                  left: `${pos.left}%`,
-                  top: `${pos.top}%`,
-                  animationDelay: `${0.5 + si * 0.08}s`,
-                }}
-              >
-                <span className="sus-node__pin" />
-                <span className="sus-node__photo">
-                  {s.name.split(' ').map((w) => w[0]).join('')}
-                </span>
-                <span className="sus-node__name">{s.name}</span>
-                {links > 0 && <span className="sus-node__links">{links}</span>}
-              </div>
-            )
-          })}
+            {/* Подозреваемые */}
+            {SUSPECTS.map((s, si) => {
+              const pos = SUS_POS[s.id]
+              const links = threadsForSuspect(s.id)
+              return (
+                <div
+                  key={s.id}
+                  className={'sus-node' + (links > 0 ? ' is-linked' : '')}
+                  style={{
+                    left: `${pos.x}px`,
+                    top: `${pos.y}px`,
+                    animationDelay: `${0.5 + si * 0.08}s`,
+                  }}
+                >
+                  <span className="sus-node__pin" />
+                  <span className="sus-node__photo">
+                    <SuspectPortrait id={s.id} />
+                  </span>
+                  <span className="sus-node__name">{s.name}</span>
+                  {links > 0 && <span className="sus-node__links">{links}</span>}
+                </div>
+              )
+            })}
+          </div>
         </div>
       </div>
 
