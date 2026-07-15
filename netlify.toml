@@ -1,7 +1,14 @@
-# Конфиг для Netlify. Vercel определяет Vite автоматически — ему отдельный файл не нужен.
+# Конфиг для Netlify. Для Vercel настройки лежат в vercel.json.
 [build]
   command = "npm run build"
   publish = "dist"
 
 [build.environment]
   NODE_VERSION = "20"
+
+# Роутинг клиентский: любой адрес отдаём index.html, иначе /cases при обновлении
+# страницы вернёт 404.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

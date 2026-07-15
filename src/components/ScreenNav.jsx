@@ -1,5 +1,5 @@
 import { useGame } from '../state/GameContext.jsx'
-import { SCREENS } from '../state/caseData.js'
+import { SCREENS } from '../engine/screens.js'
 import './ScreenNav.css'
 
 // Подвал экрана: «Назад» / «Далее». nextLabel и onNext можно переопределить.

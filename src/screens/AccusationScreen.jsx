@@ -3,13 +3,13 @@ import ScreenHeader from '../components/ScreenHeader.jsx'
 import ScreenNav from '../components/ScreenNav.jsx'
 import SuspectPortrait from '../components/SuspectPortrait.jsx'
 import { useGame } from '../state/GameContext.jsx'
-import { EVIDENCE, MOTIVES, SOLUTION, SUSPECTS } from '../state/caseData.js'
 import './AccusationScreen.css'
 
 const pad2 = (n) => String(n).padStart(2, '0')
 
 export default function AccusationScreen() {
-  const { state, setAccusation, setVerdict, next } = useGame()
+  const { state, setAccusation, setVerdict, next, caseData } = useGame()
+  const { suspects: SUSPECTS, evidence: EVIDENCE, motives: MOTIVES, solution: SOLUTION } = caseData
   const [pick, setPick] = useState({
     suspectId: state.accusation.suspectId,
     motiveId: state.accusation.motiveId,

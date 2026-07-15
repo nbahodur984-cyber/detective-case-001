@@ -1,0 +1,195 @@
+.archive {
+  padding: 2.5rem 1.2rem 4rem;
+}
+.archive__inner {
+  width: min(1000px, 92vw);
+  margin: 0 auto;
+}
+
+.archive__head {
+  margin-bottom: 2rem;
+}
+.archive__back {
+  display: inline-block;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.82rem;
+  margin-bottom: 1rem;
+}
+.archive__back:hover {
+  color: var(--accent);
+}
+.archive__title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  margin: 0 0 0.4rem;
+}
+.archive__sub {
+  color: var(--ink-dim);
+  margin: 0 0 1.2rem;
+  max-width: 60ch;
+}
+.archive__meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-size: 0.8rem;
+  color: var(--muted);
+  padding-top: 1rem;
+  border-top: 1px solid var(--edge);
+}
+.archive__toggle {
+  background: none;
+  border: 1px solid var(--edge);
+  border-radius: var(--radius);
+  color: var(--ink-dim);
+  padding: 0.35rem 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  transition: border-color 0.2s, color 0.2s;
+}
+.archive__toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── Список дел ───────────────────────────────────────────────────────── */
+.archive__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 1.4rem;
+}
+
+/* Папка дела */
+.cfile {
+  position: relative;
+  display: block;
+  padding: 1.6rem 1.3rem 1.3rem;
+  background: linear-gradient(155deg, var(--panel-2), var(--panel));
+  border: 1px solid var(--edge);
+  border-radius: 5px;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.4);
+  transition: transform 0.16s ease, border-color 0.2s, box-shadow 0.2s;
+}
+.cfile__tab {
+  position: absolute;
+  top: -11px;
+  left: 22px;
+  width: 92px;
+  height: 13px;
+  background: var(--panel);
+  border: 1px solid var(--edge);
+  border-bottom: none;
+  border-radius: 5px 5px 0 0;
+}
+
+a.cfile:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent-soft);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.5);
+}
+
+.cfile__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.7rem;
+}
+.cfile__no {
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.cfile__status {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.18rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+}
+.cfile__status--solved {
+  color: #9ed389;
+}
+.cfile__status--started {
+  color: var(--accent);
+}
+.cfile__status--open {
+  color: var(--ink-dim);
+}
+.cfile__status--locked {
+  color: var(--muted);
+}
+
+.cfile__title {
+  font-size: 1.35rem;
+  margin: 0 0 0.5rem;
+  color: var(--ink);
+  line-height: 1.2;
+}
+.cfile__tagline {
+  color: var(--ink-dim);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  margin: 0 0 1.1rem;
+  min-height: 2.6em;
+}
+
+.cfile__facts {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0 0 1.1rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--edge);
+}
+.cfile__facts > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+.cfile__facts dt {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+.cfile__facts dd {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--ink-dim);
+  text-align: right;
+}
+
+.cfile__go {
+  font-size: 0.85rem;
+  color: var(--accent);
+}
+
+/* Запертое дело */
+.cfile.is-locked {
+  opacity: 0.55;
+  background: var(--bg-2);
+  border-style: dashed;
+  box-shadow: none;
+}
+.cfile.is-locked .cfile__title {
+  color: var(--muted);
+}
+
+/* Заглушка «скоро» */
+.cfile.is-soon {
+  opacity: 0.4;
+  background: none;
+  border-style: dashed;
+  box-shadow: none;
+}
+.cfile.is-soon .cfile__title {
+  color: var(--muted);
+  font-size: 1.1rem;
+}

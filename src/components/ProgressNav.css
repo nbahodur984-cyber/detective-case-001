@@ -21,6 +21,11 @@
   font-size: 1.1rem;
   letter-spacing: 0.08em;
   flex-shrink: 0;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.pnav__case:hover {
+  opacity: 0.7;
 }
 
 .pnav__steps {

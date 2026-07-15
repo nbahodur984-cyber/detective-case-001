@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import { useGame } from '../state/GameContext.jsx'
-import { SUSPECTS } from '../state/caseData.js'
 import EvidenceIcon from './EvidenceIcon.jsx'
 import './EvidenceModal.css'
 
@@ -8,7 +7,8 @@ import './EvidenceModal.css'
 // и решает, к кому протянуть нить. Тип улики (прямая/ложная) НЕ раскрывается —
 // это игрок должен вывести сам.
 export default function EvidenceModal({ evidence, exhibitNo, onClose }) {
-  const { state, toggleThread } = useGame()
+  const { state, toggleThread, caseData } = useGame()
+  const SUSPECTS = caseData.suspects
 
   useEffect(() => {
     const onKey = (e) => e.key === 'Escape' && onClose()

@@ -1,35 +1,21 @@
-import { useGame } from './state/GameContext.jsx'
-import ProgressNav from './components/ProgressNav.jsx'
-
-import SplashScreen from './screens/SplashScreen.jsx'
-import BoardScreen from './screens/BoardScreen.jsx'
-import SuspectsScreen from './screens/SuspectsScreen.jsx'
-import InterrogationScreen from './screens/InterrogationScreen.jsx'
-import TimelineScreen from './screens/TimelineScreen.jsx'
-import AccusationScreen from './screens/AccusationScreen.jsx'
-import SolutionScreen from './screens/SolutionScreen.jsx'
-
-const SCREEN_COMPONENTS = {
-  splash: SplashScreen,
-  board: BoardScreen,
-  suspects: SuspectsScreen,
-  interrogation: InterrogationScreen,
-  timeline: TimelineScreen,
-  accusation: AccusationScreen,
-  solution: SolutionScreen,
-}
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import HomeScreen from './screens/HomeScreen.jsx'
+import ArchiveScreen from './screens/ArchiveScreen.jsx'
+import CaseScreen from './screens/CaseScreen.jsx'
 
 export default function App() {
-  const { state } = useGame()
-  const Current = SCREEN_COMPONENTS[state.screen] ?? SplashScreen
-
   return (
-    <div className="app">
-      {/* Тёплый мерцающий свет лампы поверх сцены */}
-      <div className="lamp" aria-hidden="true" />
-      <ProgressNav />
-      {/* key заставляет экран пере-монтироваться → срабатывает анимация входа */}
-      <Current key={state.screen} />
-    </div>
+    <BrowserRouter>
+      <div className="app">
+        {/* Тёплый мерцающий свет лампы поверх сцены */}
+        <div className="lamp" aria-hidden="true" />
+        <Routes>
+          <Route path="/" element={<HomeScreen />} />
+          <Route path="/cases" element={<ArchiveScreen />} />
+          <Route path="/case/:caseId" element={<CaseScreen />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </div>
+    </BrowserRouter>
   )
 }

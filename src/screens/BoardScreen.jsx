@@ -5,63 +5,40 @@ import EvidenceIcon from '../components/EvidenceIcon.jsx'
 import EvidenceModal from '../components/EvidenceModal.jsx'
 import SuspectPortrait from '../components/SuspectPortrait.jsx'
 import { useGame } from '../state/GameContext.jsx'
-import { EVIDENCE, SUSPECTS } from '../state/caseData.js'
 import './BoardScreen.css'
 
 // ── Холст-макет доски ─────────────────────────────────────────────────────
 // Всё внутри задано в этих координатах и целиком масштабируется под экран.
 // Благодаря этому композиция не «плывёт», а геометрия нитей считается
-// аналитически из позиций ниже — без единого замера DOM.
+// аналитически из раскладки дела — без единого замера DOM.
 const BOARD_W = 1040
 const BOARD_H = 640
-
-// x — центр карточки, y — её верх (там же булавка), rot — наклон.
-// Разбросано намеренно неровно: разные высоты, шаг и наклон.
-const EV_POS = {
-  floorclock: { x: 112, y: 26, rot: -4.5 },
-  call: { x: 332, y: 50, rot: 3 },
-  wristwatch: { x: 560, y: 18, rot: -2 },
-  weapon: { x: 796, y: 42, rot: 4 },
-  atm: { x: 944, y: 28, rot: -3 },
-
-  matchbook: { x: 132, y: 214, rot: 4.5 },
-  contract: { x: 360, y: 238, rot: -2.5 },
-  staging: { x: 610, y: 200, rot: 3.5 },
-  hospital: { x: 872, y: 228, rot: -3 },
-
-  rain: { x: 162, y: 396, rot: -3.5 },
-  witness: { x: 452, y: 414, rot: 2.5 },
-  nolock: { x: 782, y: 390, rot: -2 },
-}
-
-const SUS_POS = {
-  lora: { x: 150, y: 512 },
-  dan: { x: 400, y: 512 },
-  inga: { x: 650, y: 512 },
-  mark: { x: 900, y: 512 },
-}
 
 // Чем крепится улика: булавка или скотч
 const TAPED = new Set(['note', 'receipt'])
 const ICON_SIZE = { photo: 30, doc: 22, note: 20, torn: 22, receipt: 20 }
 
-// Точка крепления нити — прямо из макета, без getBoundingClientRect.
-// Булавка сидит на top:-9px при размере 15px → её центр на 1.5px ВЫШЕ верха
-// карточки. Скотч (top:-8px, высота 16) центрируется ровно по верху.
-const KIND_BY_ID = Object.fromEntries(EVIDENCE.map((e) => [e.id, e.kind]))
-const pinOf = (id) => {
-  const e = EV_POS[id]
-  if (e) return { x: e.x, y: e.y + (TAPED.has(KIND_BY_ID[id]) ? 0 : -1.5) }
-  const s = SUS_POS[id]
-  if (s) return { x: s.x, y: s.y - 1.5 }
-  return null
-}
-
 const pad2 = (n) => String(n).padStart(2, '0')
 
 export default function BoardScreen() {
-  const { state, openEvidence } = useGame()
+  const { state, openEvidence, caseData } = useGame()
+  const EVIDENCE = caseData.evidence
+  const SUSPECTS = caseData.suspects
+  const EV_POS = caseData.board.evidence
+  const SUS_POS = caseData.board.suspects
   const [active, setActive] = useState(null)
+
+  // Точка крепления нити — прямо из раскладки, без getBoundingClientRect.
+  // Булавка сидит на top:-9px при размере 15px → её центр на 1.5px ВЫШЕ верха
+  // карточки. Скотч (top:-8px, высота 16) центрируется ровно по верху.
+  const kindById = Object.fromEntries(EVIDENCE.map((e) => [e.id, e.kind]))
+  const pinOf = (id) => {
+    const e = EV_POS[id]
+    if (e) return { x: e.x, y: e.y + (TAPED.has(kindById[id]) ? 0 : -1.5) }
+    const s = SUS_POS[id]
+    if (s) return { x: s.x, y: s.y - 1.5 }
+    return null
+  }
   const wrapRef = useRef(null)
   const [scale, setScale] = useState(1)
 

@@ -1,11 +1,12 @@
+import { Link } from 'react-router-dom'
 import { useGame } from '../state/GameContext.jsx'
-import { SCREENS, SCREEN_TITLES } from '../state/caseData.js'
+import { SCREENS, SCREEN_TITLES } from '../engine/screens.js'
 import './ProgressNav.css'
 
 // Верхний стеклянный степпер: показывает 7 этапов расследования,
 // подсвечивает текущий и позволяет вернуться к уже открытым.
 export default function ProgressNav() {
-  const { state, goTo } = useGame()
+  const { state, goTo, caseData } = useGame()
   const currentIndex = SCREENS.indexOf(state.screen)
 
   // На заставке навигацию прячем — она появляется, когда расследование началось.
@@ -14,7 +15,9 @@ export default function ProgressNav() {
   return (
     <nav className="pnav" aria-label="Этапы расследования">
       <div className="pnav__inner">
-        <span className="pnav__case type">№001</span>
+        <Link className="pnav__case type" to="/cases" title="Вернуться в картотеку">
+          №{caseData.id}
+        </Link>
         <ol className="pnav__steps">
           {SCREENS.filter((s) => s !== 'splash').map((screen) => {
             const idx = SCREENS.indexOf(screen)

@@ -1,11 +1,13 @@
 import ScreenHeader from '../components/ScreenHeader.jsx'
 import ScreenNav from '../components/ScreenNav.jsx'
 import SuspectPortrait from '../components/SuspectPortrait.jsx'
-import { SUSPECTS } from '../state/caseData.js'
+import { useGame } from '../state/GameContext.jsx'
 import './SuspectsScreen.css'
 
-// Первичные досье. Портреты, «прикалывание» карточек и связь с доской — этап 6.
 export default function SuspectsScreen() {
+  const { caseData } = useGame()
+  const SUSPECTS = caseData.suspects
+
   return (
     <div className="screen">
       <div className="screen__inner">

@@ -213,3 +213,14 @@
   max-width: 44ch;
   animation: rise 0.5s ease 1.3s backwards;
 }
+
+.splash__back {
+  margin-top: 1.2rem;
+  color: var(--muted);
+  font-size: 0.8rem;
+  text-decoration: none;
+  animation: rise 0.5s ease 1.4s backwards;
+}
+.splash__back:hover {
+  color: var(--accent);
+}

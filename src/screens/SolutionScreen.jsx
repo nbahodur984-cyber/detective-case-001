@@ -1,12 +1,7 @@
 import ScreenHeader from '../components/ScreenHeader.jsx'
 import SuspectPortrait from '../components/SuspectPortrait.jsx'
 import { useGame } from '../state/GameContext.jsx'
-import { EVIDENCE, MOTIVES, SOLUTION, SUSPECTS } from '../state/caseData.js'
 import './SolutionScreen.css'
-
-const susById = Object.fromEntries(SUSPECTS.map((s) => [s.id, s]))
-const evById = Object.fromEntries(EVIDENCE.map((e) => [e.id, e]))
-const motiveById = Object.fromEntries(MOTIVES.map((m) => [m.id, m]))
 
 function Row({ label, value }) {
   return (
@@ -18,7 +13,12 @@ function Row({ label, value }) {
 }
 
 export default function SolutionScreen() {
-  const { state, reset, goTo } = useGame()
+  const { state, reset, goTo, caseData } = useGame()
+  const { suspects: SUSPECTS, evidence: EVIDENCE, motives: MOTIVES, solution: SOLUTION } = caseData
+  const susById = Object.fromEntries(SUSPECTS.map((s) => [s.id, s]))
+  const evById = Object.fromEntries(EVIDENCE.map((e) => [e.id, e]))
+  const motiveById = Object.fromEntries(MOTIVES.map((m) => [m.id, m]))
+
   const culprit = susById[SOLUTION.culpritId]
   const acc = state.accusation
   const made = !!(acc.suspectId || acc.motiveId || acc.evidenceId)

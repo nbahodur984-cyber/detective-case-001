@@ -2,14 +2,16 @@ import { useEffect, useRef, useState } from 'react'
 import ScreenHeader from '../components/ScreenHeader.jsx'
 import ScreenNav from '../components/ScreenNav.jsx'
 import { useGame } from '../state/GameContext.jsx'
-import { TIMELINE, TIMELINE_INSIGHT, TIMELINE_SCRAMBLE } from '../state/caseData.js'
 import './TimelineScreen.css'
 
-const byId = Object.fromEntries(TIMELINE.map((e) => [e.id, e]))
-const CORRECT = TIMELINE.map((e) => e.id)
-
 export default function TimelineScreen() {
-  const { state, setTimeline } = useGame()
+  const { state, setTimeline, caseData } = useGame()
+  const TIMELINE = caseData.timeline
+  const TIMELINE_SCRAMBLE = caseData.timelineScramble
+  const TIMELINE_INSIGHT = caseData.timelineInsight
+  const byId = Object.fromEntries(TIMELINE.map((e) => [e.id, e]))
+  const CORRECT = TIMELINE.map((e) => e.id)
+
   const [order, setOrder] = useState(() => state.timelineOrder || TIMELINE_SCRAMBLE)
   const [feedback, setFeedback] = useState(
     state.timelineSolved ? { status: 'solved' } : { status: 'idle' },

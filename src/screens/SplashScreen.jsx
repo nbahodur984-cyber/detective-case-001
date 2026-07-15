@@ -1,9 +1,9 @@
+import { Link } from 'react-router-dom'
 import { useGame } from '../state/GameContext.jsx'
-import { CASE_META } from '../state/caseData.js'
 import './SplashScreen.css'
 
 export default function SplashScreen() {
-  const { next, reset, state } = useGame()
+  const { next, reset, state, caseData: CASE_META } = useGame()
   const hasProgress = state.visited.length > 1 || state.openedEvidence.length > 0
 
   return (
@@ -56,6 +56,9 @@ export default function SplashScreen() {
       <p className="splash__hint">
         Улики честны: они логически ведут к одному виновному. Не угадывайте — исключайте.
       </p>
+      <Link className="splash__back" to="/cases">
+        ← Ко всем делам
+      </Link>
     </div>
   )
 }

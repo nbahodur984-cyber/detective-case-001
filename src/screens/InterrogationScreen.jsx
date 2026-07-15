@@ -3,13 +3,7 @@ import ScreenHeader from '../components/ScreenHeader.jsx'
 import ScreenNav from '../components/ScreenNav.jsx'
 import SuspectPortrait from '../components/SuspectPortrait.jsx'
 import { useGame } from '../state/GameContext.jsx'
-import { DIALOGUE, EVIDENCE, SUSPECTS } from '../state/caseData.js'
 import './InterrogationScreen.css'
-const evNo = (id) => {
-  const i = EVIDENCE.findIndex((e) => e.id === id)
-  return i < 0 ? '' : String(i + 1).padStart(2, '0')
-}
-const evTitle = (id) => EVIDENCE.find((e) => e.id === id)?.title || ''
 
 const VERDICT = {
   confirm: { cls: 'is-confirm', label: 'Подтверждается уликой' },
@@ -18,7 +12,7 @@ const VERDICT = {
 }
 
 // Плашка сверки показания с уликой.
-function VerdictTag({ verdict, evidenceId, note, opened }) {
+function VerdictTag({ verdict, evidenceId, note, opened, evNo, evTitle }) {
   const v = VERDICT[verdict]
   if (!v) return null
   return (
@@ -36,7 +30,17 @@ function VerdictTag({ verdict, evidenceId, note, opened }) {
 }
 
 export default function InterrogationScreen() {
-  const { state, seeReply } = useGame()
+  const { state, seeReply, caseData } = useGame()
+  const SUSPECTS = caseData.suspects
+  const DIALOGUE = caseData.dialogue
+  const EVIDENCE = caseData.evidence
+
+  const evNo = (id) => {
+    const i = EVIDENCE.findIndex((e) => e.id === id)
+    return i < 0 ? '' : String(i + 1).padStart(2, '0')
+  }
+  const evTitle = (id) => EVIDENCE.find((e) => e.id === id)?.title || ''
+
   const [activeId, setActiveId] = useState(SUSPECTS[0].id)
 
   const suspect = SUSPECTS.find((s) => s.id === activeId)
@@ -112,6 +116,8 @@ export default function InterrogationScreen() {
                     evidenceId={qa.evidenceId}
                     note={qa.note}
                     opened={qa.evidenceId ? state.openedEvidence.includes(qa.evidenceId) : false}
+                    evNo={evNo}
+                    evTitle={evTitle}
                   />
                 </div>
               </div>
